@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -15,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../context/AuthContext';
 import { AuthScreenProps } from '../types';
 
-const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
+const AuthScreen: React.FC<AuthScreenProps> = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +42,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
           setShowVerification(true);
           return;
         }
-        
+
         const verified = await verifyEmail(verificationCode);
         if (verified) {
           Alert.alert('Success', 'Email verified successfully! You can now login.');
@@ -53,8 +52,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
           Alert.alert('Error', 'Invalid verification code. Please try again.');
         }
       }
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -65,25 +65,23 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
       setLoading(true);
       await logout();
       // Exit app logic here
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <LinearGradient
-      colors={['#4c669f', '#3b5998', '#192f6a']}
-      style={styles.container}
-    >
+    <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Text style={styles.title}>{isLogin ? 'Login' : 'Sign Up'}</Text>
-          
+
           {!isLogin && !showVerification && (
             <>
               <TextInput
@@ -136,8 +134,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
             />
           )}
 
-          <TouchableOpacity 
-            style={[styles.button, loading && styles.buttonDisabled]} 
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleAuth}
             disabled={loading}
           >
@@ -145,7 +143,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
               <ActivityIndicator color="#3b5998" />
             ) : (
               <Text style={styles.buttonText}>
-                {isLogin ? 'Login' : (showVerification ? 'Verify' : 'Sign Up')}
+                {isLogin ? 'Login' : showVerification ? 'Verify' : 'Sign Up'}
               </Text>
             )}
           </TouchableOpacity>
@@ -163,8 +161,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.exitButton, loading && styles.buttonDisabled]} 
+          <TouchableOpacity
+            style={[styles.exitButton, loading && styles.buttonDisabled]}
             onPress={handleExit}
             disabled={loading}
           >
@@ -239,4 +237,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AuthScreen; 
+export default AuthScreen;

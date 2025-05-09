@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Welcome; 
+export default Welcome;

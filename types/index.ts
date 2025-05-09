@@ -10,13 +10,15 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signup: (email: string, password: string, username: string, userId: string) => Promise<User>;
-  login: (email: string, password: string) => Promise<User>;
-  logout: () => Promise<void>;
-  sendVerificationEmail: (email: string) => Promise<void>;
-  verifyEmail: (code: string) => Promise<boolean>;
+  signup(email: string, password: string, username: string, userId: string): Promise<User>;
+  login(email: string, password: string): Promise<User>;
+  logout(): Promise<void>;
+  sendVerificationEmail(): Promise<void>;
+  verifyEmail(code: string): Promise<boolean>;
 }
 
 export interface AuthScreenProps {
-  navigation: any;
-} 
+  navigation: {
+    navigate: (screen: string, params?: Record<string, unknown>) => void;
+  };
+}

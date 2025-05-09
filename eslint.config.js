@@ -9,7 +9,20 @@ import prettierPlugin from 'eslint-plugin-prettier';
 export default [
   eslint.configs.recommended,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{ts,tsx}'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.git/**',
+      '**/.husky/**',
+      '**/assets/**',
+      '**/*.json',
+      '**/*.md',
+      '**/*.png',
+      '**/*.sh',
+      '**/.DS_Store',
+      'eslint.config.js',
+    ],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -21,10 +34,10 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint,
-      'react': reactPlugin,
+      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       'react-native': reactNativePlugin,
-      'prettier': prettierPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       'prettier/prettier': 'error',
@@ -36,6 +49,9 @@ export default [
       'react-native/no-color-literals': 'warn',
       'react-native/no-raw-text': 'off',
       'react-native/no-single-element-style-arrays': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error'],
+      'no-useless-catch': 'error',
     },
     settings: {
       react: {
@@ -43,4 +59,4 @@ export default [
       },
     },
   },
-]; 
+];
