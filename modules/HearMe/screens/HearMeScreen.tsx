@@ -5,6 +5,7 @@ import { Audio } from 'expo-av';
 import { useAuth } from '../../../context/AuthContext';
 import RecordingControls from '../components/RecordingControls';
 import RecordingsList from '../components/RecordingsList';
+import FileNameDialog from '../components/FileNameDialog';
 import {
   requestRecordingPermissions,
   startRecording,
@@ -12,6 +13,8 @@ import {
   pickAudioFile,
   uploadRecording,
   loadUserRecordings,
+  updateRecordingFileName,
+  deleteRecording,
 } from '../utils/recordingUtils';
 import { Recording } from '../types';
 
@@ -22,6 +25,9 @@ const HearMeScreen = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [recordings, setRecordings] = useState<Recording[]>([]);
+  const [showFileNameDialog, setShowFileNameDialog] = useState(false);
+  const [tempRecordingUri, setTempRecordingUri] = useState<string | null>(null);
+  const [editingRecording, setEditingRecording] = useState<Recording | null>(null);
 
   useEffect(() => {
     loadRecordings();
@@ -62,16 +68,9 @@ const HearMeScreen = () => {
       setRecording(null);
       setIsRecording(false);
 
-      if (uri && user) {
-        setIsUploading(true);
-        const success = await uploadRecording(uri, 'recording', user.uid);
-        if (success) {
-          await loadRecordings();
-          Alert.alert('Success', 'Recording uploaded successfully');
-        } else {
-          Alert.alert('Error', 'Failed to upload recording');
-        }
-        setIsUploading(false);
+      if (uri) {
+        setTempRecordingUri(uri);
+        setShowFileNameDialog(true);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to stop recording');
@@ -82,19 +81,85 @@ const HearMeScreen = () => {
     try {
       const result = await pickAudioFile();
       if (result && user) {
-        setIsUploading(true);
-        const success = await uploadRecording(result.uri, result.name, user.uid);
-        if (success) {
-          await loadRecordings();
-          Alert.alert('Success', 'File uploaded successfully');
-        } else {
-          Alert.alert('Error', 'Failed to upload file');
-        }
-        setIsUploading(false);
+        setTempRecordingUri(result.uri);
+        setShowFileNameDialog(true);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to pick audio file');
     }
+  };
+
+  const handleSaveFileName = async (fileName: string) => {
+    if (!user || !tempRecordingUri) return;
+
+    try {
+      setIsUploading(true);
+      const success = await uploadRecording(tempRecordingUri, fileName, user.uid);
+      if (success) {
+        await loadRecordings();
+        Alert.alert('Success', 'Recording saved successfully');
+      } else {
+        Alert.alert('Error', 'Failed to save recording');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save recording');
+    } finally {
+      setIsUploading(false);
+      setShowFileNameDialog(false);
+      setTempRecordingUri(null);
+    }
+  };
+
+  const handleEditRecording = async (recording: Recording) => {
+    setEditingRecording(recording);
+    setShowFileNameDialog(true);
+  };
+
+  const handleUpdateFileName = async (newFileName: string) => {
+    if (!editingRecording) return;
+
+    try {
+      setIsUploading(true);
+      const success = await updateRecordingFileName(editingRecording.id, newFileName);
+      if (success) {
+        await loadRecordings();
+        Alert.alert('Success', 'Recording updated successfully');
+      } else {
+        Alert.alert('Error', 'Failed to update recording');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update recording');
+    } finally {
+      setIsUploading(false);
+      setShowFileNameDialog(false);
+      setEditingRecording(null);
+    }
+  };
+
+  const handleDeleteRecording = async (recording: Recording) => {
+    Alert.alert('Delete Recording', 'Are you sure you want to delete this recording?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setIsUploading(true);
+            const success = await deleteRecording(recording);
+            if (success) {
+              await loadRecordings();
+              Alert.alert('Success', 'Recording deleted successfully');
+            } else {
+              Alert.alert('Error', 'Failed to delete recording');
+            }
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete recording');
+          } finally {
+            setIsUploading(false);
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -122,7 +187,22 @@ const HearMeScreen = () => {
           </View>
         )}
 
-        <RecordingsList recordings={recordings} />
+        <RecordingsList
+          recordings={recordings}
+          onEditRecording={handleEditRecording}
+          onDeleteRecording={handleDeleteRecording}
+        />
+
+        <FileNameDialog
+          visible={showFileNameDialog}
+          initialFileName={editingRecording?.fileName}
+          onSave={editingRecording ? handleUpdateFileName : handleSaveFileName}
+          onCancel={() => {
+            setShowFileNameDialog(false);
+            setTempRecordingUri(null);
+            setEditingRecording(null);
+          }}
+        />
       </View>
     </View>
   );

@@ -26,4 +26,13 @@ export interface RecordingControlsProps {
 
 export interface RecordingsListProps {
   recordings: Recording[];
+  onEditRecording: (recording: Recording) => Promise<void>;
+  onDeleteRecording: (recording: Recording) => Promise<void>;
+}
+
+export interface FileNameDialogProps {
+  visible: boolean;
+  initialFileName?: string;
+  onSave: (fileName: string) => Promise<void>;
+  onCancel: () => void;
 }

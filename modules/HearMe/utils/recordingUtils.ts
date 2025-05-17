@@ -1,6 +1,15 @@
 import { Audio } from 'expo-av';
 import * as DocumentPicker from 'expo-document-picker';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from 'firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { db } from '../../../firebaseConfig';
 import { Recording } from '../types';
@@ -88,5 +97,34 @@ export const loadUserRecordings = async (userId: string): Promise<Recording[]> =
     })) as Recording[];
   } catch (error) {
     return [];
+  }
+};
+
+export const updateRecordingFileName = async (
+  recordingId: string,
+  newFileName: string
+): Promise<boolean> => {
+  try {
+    await updateDoc(doc(db, 'recordings', recordingId), {
+      fileName: newFileName,
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const deleteRecording = async (recording: Recording): Promise<boolean> => {
+  try {
+    // Delete from Firestore
+    await deleteDoc(doc(db, 'recordings', recording.id));
+
+    // Delete from Storage
+    const storageRef = storage().refFromURL(recording.fileUrl);
+    await storageRef.delete();
+
+    return true;
+  } catch (error) {
+    return false;
   }
 };
