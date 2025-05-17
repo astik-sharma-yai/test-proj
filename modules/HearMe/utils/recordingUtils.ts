@@ -49,10 +49,11 @@ export const pickAudioFile = async (): Promise<{ uri: string; name: string } | n
       copyToCacheDirectory: true,
     });
 
-    if (result.type === 'success') {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
       return {
-        uri: result.uri,
-        name: result.name,
+        uri: asset.uri,
+        name: asset.name,
       };
     }
     return null;
