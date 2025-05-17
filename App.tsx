@@ -4,12 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthScreen from './screens/AuthScreen';
 import Welcome from './components/Welcome';
-
-// Import module screens (we'll create these next)
-import HearMeScreen from './modules/HearMe/screens/HearMeScreen';
-import ReadMeScreen from './modules/ReadMe/screens/ReadMeScreen';
-import WriteMeScreen from './modules/WriteMe/screens/WriteMeScreen';
-import TellMeScreen from './modules/TellMe/screens/TellMeScreen';
+import HearMeScreen from './modules/HearMe';
+import ReadMeScreen from './modules/ReadMe';
+import WriteMeScreen from './modules/WriteMe';
+import TellMeScreen from './modules/TellMe';
 
 const Stack = createNativeStackNavigator();
 

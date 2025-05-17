@@ -39,7 +39,7 @@ const Welcome = () => {
             <ModuleCard
               key={module.route}
               title={module.title}
-              onPress={() => navigation.navigate(module.route)}
+              onPress={() => navigation.navigate(module.route as never)}
             />
           ))}
         </View>
