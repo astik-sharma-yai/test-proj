@@ -5,6 +5,12 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthScreen from './screens/AuthScreen';
 import Welcome from './components/Welcome';
 
+// Import module screens (we'll create these next)
+import HearMeScreen from './modules/HearMe/screens/HearMeScreen';
+import ReadMeScreen from './modules/ReadMe/screens/ReadMeScreen';
+import WriteMeScreen from './modules/WriteMe/screens/WriteMeScreen';
+import TellMeScreen from './modules/TellMe/screens/TellMeScreen';
+
 const Stack = createNativeStackNavigator();
 
 const Navigation: React.FC = () => {
@@ -17,7 +23,13 @@ const Navigation: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        <Stack.Screen name="Welcome" component={Welcome} />
+        <>
+          <Stack.Screen name="Welcome" component={Welcome} />
+          <Stack.Screen name="HearMe" component={HearMeScreen} />
+          <Stack.Screen name="ReadMe" component={ReadMeScreen} />
+          <Stack.Screen name="WriteMe" component={WriteMeScreen} />
+          <Stack.Screen name="TellMe" component={TellMeScreen} />
+        </>
       ) : (
         <Stack.Screen name="Auth" component={AuthScreen} />
       )}
