@@ -22,6 +22,7 @@ A React Native application built with Expo that includes authentication features
 
 1. Clone the repository
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -32,6 +33,7 @@ A React Native application built with Expo that includes authentication features
 ## Running the App
 
 1. Start the development server:
+
    ```bash
    npx expo start
    ```
@@ -62,4 +64,4 @@ A React Native application built with Expo that includes authentication features
 - The app is configured to work with Android 10 and above
 - Firebase is used as the backend service
 - The app includes email verification during signup
-- Cache is cleared on exit 
+- Cache is cleared on exit
